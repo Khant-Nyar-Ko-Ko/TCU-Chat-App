@@ -1,7 +1,7 @@
 import { Navigate, RouteObject } from "react-router-dom";
 import {
   ForgetPassLayout,
-  LogIn,
+  LogInLayout,
   ProfileSetupLayout,
   SignUpLayout,
 } from "../Layouts/AuthLayouts";
@@ -9,10 +9,12 @@ import { ForgetPaswMail, ResetPassword } from "../pages/AuthPages";
 import TermOfUse from "@/Layouts/AuthLayouts/TermOfUse";
 import PrivancyPolicy from "@/Layouts/AuthLayouts/PrivancyPolicy";
 
+
+
 const UserRouter: RouteObject[] = [
   {
     path: "/",
-    element: <LogIn />,
+    element: <LogInLayout />,
   },
   {
     path: "/sign-up",

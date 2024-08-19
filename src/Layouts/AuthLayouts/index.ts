@@ -1,6 +1,6 @@
-import LogIn from "./LogIn";
+import LogInLayout from "./LogInLayout";
 import SignUpLayout from "./SignUpLayout";
 import ForgetPassLayout from "./ForgetPassLayout";
 import ProfileSetupLayout from "./ProfileSetupLayout";
 
-export { LogIn, SignUpLayout, ForgetPassLayout, ProfileSetupLayout };
+export { LogInLayout, SignUpLayout, ForgetPassLayout, ProfileSetupLayout };
