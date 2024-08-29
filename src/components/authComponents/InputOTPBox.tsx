@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoMdCloseCircleOutline } from "react-icons/io";
@@ -17,8 +18,9 @@ import Swal from "sweetalert2";
 const InputOTPBox = () => {
   const { OTPBoxHandler, accountData } = useAuthContext();
   const [otpCode, setOtpCode] = useState<string>("");
-  const [timeLeft, setTimeLeft] = useState<number>(180);
-  const [showError, setShowError] = useState<boolean>(false);
+  const [resendCooldown, setResendCooldown] = useState<number>(60);
+  // const [timeLeft, setTimeLeft] = useState<number>(180);
+  // const [showError, setShowError] = useState<boolean>(false);
   const verifyEmail = useVerifyEmail();
   const resendOtp = useResendOtp();
   const navigate = useNavigate();
@@ -28,7 +30,7 @@ const InputOTPBox = () => {
       const authToken = verifyEmail.data.accessToken;
       delete verifyEmail.data.accessToken;
       login(authToken);
-      navigate("/profile-setup");
+      navigate("/auth/profile-setup");
     }
   }, [verifyEmail.isSuccess, navigate]);
 
@@ -43,43 +45,36 @@ const InputOTPBox = () => {
     }
   }, [verifyEmail.isError]);
 
+  // useEffect(() => {
+  //   if(timeLeft === 0) {
+  //     setShowError(true)
+  //   }
+  // }, [timeLeft])
+
+  // useEffect(() => {
+  //   // Start the countdown
+  //   const countdown = setInterval(() => {
+  //     setTimeLeft((prevTime) => {
+  //       if (prevTime <= 1) {
+  //         clearInterval(countdown);
+  //         return 0;
+  //       }
+  //       return prevTime - 1;
+  //     });
+  //   }, 1000);
+
+  //   return () => clearInterval(countdown);
+  // }, [timeLeft]);
+
   useEffect(() => {
-    if(timeLeft === 0) {
-      setShowError(true)
+    if (resendCooldown > 0) {
+      const cooldownTimer = setInterval(() => {
+        setResendCooldown((prev) => prev - 1);
+      }, 1000);
+
+      return () => clearInterval(cooldownTimer);
     }
-  }, [timeLeft])
-
-  useEffect(() => {
-    // let countdown: NodeJS.Timeout;
-
-    // if (timeLeft > 0) { 
-    //   countdown = setInterval(() => {
-    //     setTimeLeft((prevTime) => {
-    //       if (prevTime <= 1) {
-    //         clearInterval(countdown);
-    //         return 0;
-    //       }
-    //       return prevTime - 1;
-    //     });
-    //   }, 1000); 
-    // } else {
-    //   setShowError(true);
-    // }
-
-    // return () => clearInterval(countdown);
-    // Start the countdown
-    const countdown = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 1) {
-          clearInterval(countdown);
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(countdown);
-  }, [timeLeft]);
+  }, [resendCooldown]);
 
   // Format time in MM:SS format
   const formatTime = (time: number) => {
@@ -106,13 +101,12 @@ const InputOTPBox = () => {
     const resendEmail = accountData?.email;
     console.log("Resend email:", resendEmail);
     resendOtp.mutate(resendEmail);
-    setShowError(false);
-    setTimeLeft(180);
+    setResendCooldown(60);
   };
 
   return (
     <>
-      <div className="top-0 left-0 md:absolute md:flex justify-center items-center hidden bg-black opacity-50 w-screen h-screen"></div>
+      <div className="top-0 left-0 items-center justify-center hidden w-screen h-screen bg-black opacity-50 md:absolute md:flex"></div>
       <div className="top-[100px] left-[50px] md:left-[500px] z-10 absolute flex flex-col justify-center items-center gap-4 bg-white opacity-100 p-2 md:p-4 rounded w-[300px] md:w-[400px] h-auto">
         <div
           onClick={OTPBoxHandler}
@@ -121,8 +115,8 @@ const InputOTPBox = () => {
           <IoMdCloseCircleOutline color="#8566FF" />
         </div>
         <img src={gmailLogo} className="py-2 w-[50px] md:w-[100px]" alt="Gmail Logo" />
-        <h3 className="font-bold text-lg md:text-xl">Verify your email address</h3>
-        <p className="pb-2 font-semibold text-xs">
+        <h3 className="text-lg font-bold md:text-xl">Verify your email address</h3>
+        <p className="pb-2 text-xs font-semibold">
           Please enter the 6-digit code sent to your{" "}
           <span className="text-main">email example.com</span>
         </p>
@@ -131,39 +125,43 @@ const InputOTPBox = () => {
             {Array.from({ length: 6 }).map((_, index) => (
               <InputOTPSlot
                 key={index}
-                className="bg-main2 border-none rounded text-white"
+                className="text-white border-none rounded bg-main2"
                 index={index}
               />
             ))}
           </InputOTPGroup>
         </InputOTP>
-        {
+        {/* {
           showError ? (
-            <p className="font-semibold text-red-500 text-sm md:text-base">
+            <p className="text-sm font-semibold text-red-500 md:text-base">
               Time is up! Please request a new OTP.
             </p>
           ) : (
-            <p className="font-extralight text-sm md:text-base">
+            <p className="text-sm font-extralight md:text-base">
               OTP code will expire within{" "}
-              <span className="text-main underline">{formatTime(timeLeft)}</span>
+              <span className="underline text-main">{formatTime(timeLeft)}</span>
             </p>
           )
-        }
+        } */}
         
-        <div className="flex flex-col justify-center items-center gap-2">
+        <div className="flex flex-col items-center justify-center gap-2">
           <Button onClick={handleSubmit} variant="otp">
             Confirm
           </Button>
+          <div className="flex">
           <button
             onClick={handleResendOtp}
-            className="font-semibold text-main text-xs md:text-base underline cursor-pointer"
+            disabled={resendCooldown > 0}
+            className={`font-semibold text-[14px] md:text-[16px] underline cursor-pointer ${resendCooldown > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-main'}`}
           >
             Resend Code Again
           </button>
+          <p className="mt-[2px] md:mt-1 ml-1 font-bold text-[12px] text-slate-600 md:text-[14px]">{resendCooldown > 0 && `(${formatTime(resendCooldown)})`}</p>
+          </div>
         </div>
-        <p className="py-2 md:py-0 font-semibold text-xs md:text-base">
+        <p className="py-2 text-xs font-semibold md:py-0 md:text-base">
           Have questions?{" "}
-          <span className="text-main cursor-pointer">Email us</span>
+          <span className="cursor-pointer text-main">Email us</span>
         </p>
       </div>
     </>
