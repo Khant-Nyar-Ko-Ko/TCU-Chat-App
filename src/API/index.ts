@@ -4,6 +4,8 @@ import { forgetPasswordAPI } from "../API/AuthAPI";
 import { resetPswAPI } from "../API/AuthAPI";
 import { newPasswordAPI } from "../API/AuthAPI";
 import { profileSetupAPI } from "../API/AuthAPI";
+import { getPublishQuotes } from "./HomeAPI";
+import { getMe } from "./UserAPI";
 
 export { 
     SignUpAPI, 
@@ -12,4 +14,6 @@ export {
     resetPswAPI,
     newPasswordAPI,
     profileSetupAPI,
+    getPublishQuotes,
+    getMe,
 };

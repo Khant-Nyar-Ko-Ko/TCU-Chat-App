@@ -1,6 +1,6 @@
 import { Navigate, RouteObject } from "react-router-dom";
-import { HomePages } from "@/pages/UserPages";
 import UserLayout from "@/Layouts/UserLayout";
+import { ChatLayouts, HomeLayout, UserProfileLayout } from "@/Layouts/UserLayouts";
 
 const UserRouter: RouteObject[] = [
   {
@@ -13,9 +13,17 @@ const UserRouter: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <HomePages />,
+        element: <HomeLayout />,
       },
     ],
+  },
+  {
+    path: "/profile",
+    element: <UserProfileLayout/>
+  },
+  {
+    path: "/chats",
+    element: <ChatLayouts/>
   },
 ];
 

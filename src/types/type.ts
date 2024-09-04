@@ -26,3 +26,18 @@ export type profileSetupData = {
   dateOfBirth?: string;
   gender: string;
 }
+
+export type userPublicQuotesData = {
+  quote: string;
+}
+
+export type UserData = {
+  userName: string;
+  role: string;
+  displayName: string;
+  email: string;
+  profile?: File | string;
+  bio: string;
+  dateOfBirth: string;
+  gender: string;
+}
